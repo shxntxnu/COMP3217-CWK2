@@ -1,3 +1,10 @@
+# These were the hyperparameters used and 
+# Normalise data instead of replacing the values
+# Use cross validation techniques (dimension reduction, grid-search)
+
+
+
+
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
