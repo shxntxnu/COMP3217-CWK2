@@ -1,8 +1,7 @@
 # These were the hyperparameters used and 
 # Normalise data instead of replacing the values
 # Use cross validation techniques (dimension reduction, grid-search)
-
-
+# Accuracy: F1 score, confusion matrix, etc. "This was my training error, this was my cross-validation error."
 
 
 import pandas as pd
@@ -53,4 +52,3 @@ test_df["marker"] = y_pred
 
 # output results to file
 test_df.to_csv("TestingResultsBinary.csv", index=False, header=train_df.columns)
-
