@@ -3,7 +3,8 @@ import numpy as np
 from sklearn import linear_model, svm, metrics
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import confusion_matrix, f1_score, ConfusionMatrixDisplay, mean_squared_error, r2_score
+from sklearn.metrics import confusion_matrix, f1_score, ConfusionMatrixDisplay
+from sklearn.model_selection import cross_val_score
 import matplotlib.pyplot as plt
 
 #load training data
@@ -38,8 +39,14 @@ X_test = scaler.transform(X_test)
 
 # print(X_test)
 
-clf = linear_model.LogisticRegression(random_state=0, max_iter=1000)
-# clf = linear_model.LogisticRegression(random_state=0, solver='liblinear')
+clf = linear_model.LogisticRegression(random_state=0, max_iter=10000)
+
+# perform 5-fold cross-validation on the training data and compute the mean F1 score
+f1_scores = cross_val_score(clf, X_train, y_train, cv=5, scoring='f1_weighted')
+print("Cross-validation F1 scores: ", f1_scores)
+print("Mean F1 score: ", np.mean(f1_scores))
+
+# train the model on the full training data
 clf.fit(X_train, y_train)
 
 #make predictions on the testing data
