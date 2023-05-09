@@ -73,3 +73,9 @@ disp.plot()
 plt.xlabel('Predicted label')
 plt.ylabel('True label')
 plt.show()
+
+# add predicted labels to testing data
+test_df["marker"] = y_pred
+
+# output results to file
+test_df.to_csv("TestingResultsBinary.csv", index=False, header=train_df.columns)
