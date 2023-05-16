@@ -5,23 +5,19 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-#load training data
-train_df = pd.read_csv("TrainingDataBinary.csv")
-
-#load testing data
-test_df = pd.read_csv("TestingDataBinary.csv")
-
-X_train = train_df.iloc[:, :128]  # Extracting PMU measurement columns (1-116)
-y_train = train_df[:, 128]  # Extracting the label column
+# Load and preprocess the training data
+training_data = pd.read_csv('TrainingDataMulti.csv')
+X_train = training_data.iloc[:, 1:128]  # Extracting PMU measurement columns (1-128)
+y_train = training_data.iloc[:, 128]  # Extracting the label column
 
 # Clean the data by dividing by the maximum value
 X_train = X_train / X_train.max()
 
-# clean the data to replace infinite and large values with NaN
+# Clean the data to replace infinite and large values with NaN
 X_train[~np.isfinite(X_train)] = np.nan
 X_train = np.nan_to_num(X_train)
 
-# scale the features
+# Scale the features
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 
@@ -33,28 +29,9 @@ logistic.fit(X_train, y_train)
 n_samples = len(X_train)
 
 # Compute the training-test split
-ratio = 0.3
+ratio = 0.4
 X_train_split = X_train[:int(ratio * n_samples)]
 y_train_split = y_train[:int(ratio * n_samples)]
-
-# Load and preprocess the testing data
-test_df = pd.read_csv('TestingDataBinary.csv')
-X_test_final = test_df.iloc[:, 1:128]  # Extracting PMU measurement columns (1-116)
-
-# Clean the testing data by dividing by the maximum value
-X_test_final = X_test_final / X_train.max()
-
-# clean the data to replace infinite and large values with NaN
-X_test_final[~np.isfinite(X_test_final)] = np.nan
-X_test_final = np.nan_to_num(X_test_final)
-
-# Scale the features
-X_test_final = scaler.transform(X_test_final)
-
-# Predict labels for the testing data
-predictions_final = logistic.predict(X_test_final)
-
-# Compute the training-test split
 X_test = X_train[int(ratio * n_samples):]
 y_test = y_train[int(ratio * n_samples):]
 
@@ -75,8 +52,26 @@ disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=logistic.class
 disp.plot()
 plt.show()
 
-# Add predicted labels to testing data
-test_df['marker'] = predictions_final
+# Load and preprocess the testing data
+testing_data = pd.read_csv('TestingDataMulti.csv')
+X_test_final = testing_data.iloc[:, 1:128]  # Extracting PMU measurement columns (1-128)
 
-# Save the results to "TestingResultsBinary.csv"
-test_df.to_csv('TestingResultsBinary.csv', index=False, header=train_df.columns)
+# Clean the testing data by dividing by the maximum value
+X_test_final = X_test_final / X_train.max()
+
+# Clean the data to replace infinite and large values with NaN
+X_test_final[~np.isfinite(X_test_final)] = np.nan
+X_test_final = np.nan_to_num(X_test_final)
+
+# Scale the features
+X_test_final = scaler.transform(X_test_final)
+
+# Predict labels for the testing data
+predictions_final = logistic.predict(X_test_final)
+
+# Create a new DataFrame with the predicted labels
+results = pd.DataFrame()
+results['marker'] = predictions_final
+
+# Save the results to "TestingResultsMulti.csv"
+results.to_csv('TestingResultsMulti.csv', index=False)
